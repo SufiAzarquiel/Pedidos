@@ -1,6 +1,6 @@
 ﻿namespace Pedidos.model
 {
-    class Pedido
+    public class Pedido
     {
         public string NPedido { get; set; }
         public string Cliente { get; set; }

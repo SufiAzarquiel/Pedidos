@@ -10,7 +10,11 @@
   <ItemGroup>
     <Folder Include="model\" />
     <Folder Include="connection\" />
-    <Folder Include="viewmodel\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
   </ItemGroup>
 
 </Project>

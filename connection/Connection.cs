@@ -3,6 +3,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Windows;
 
 namespace Pedidos.connection
@@ -31,7 +32,7 @@ namespace Pedidos.connection
             CN = new SqlConnection(connectionStr);
             // Instanciamos la variable CMD pasandole a su constructor la instrucción OleDb que debe ejecutar
             // así como  la variable CN que le indica en que base de datos debe ejecutar dicha instrucción.
-            CMD = new SqlCommand("SELECT * FROM Pedidos", CN);
+            CMD = new SqlCommand("SELECT * FROM TPedidos", CN);
             // Tipo de comando.
             CMD.CommandType = CommandType.Text;
 
@@ -50,9 +51,12 @@ namespace Pedidos.connection
 
                     // Crear un objecto que "envuelve" el registro actual.
                     Pedido currentPedido = new Pedido();
-                    currentPedido.NPedido = RDR["NPedido"].ToString();
-                    currentPedido.Cliente = RDR["Cliente"].ToString();
-                    currentPedido.DNI = RDR["DNI"].ToString();
+                    currentPedido.NPedido = (string)RDR["NPedido"];
+                    currentPedido.Cliente = (string)RDR["Cliente"];
+                    currentPedido.DNI = (string)RDR["DNI"];
+                    Debug.WriteLine(RDR["Cantidad"]);
+                    currentPedido.Cantidad = (int)RDR["Cantidad"];
+                    currentPedido.Fecha = (string)RDR["Fecha"];
 
                     // Agregar el objeto a la coleccion.
                     PedidoList.Add(currentPedido);
@@ -61,7 +65,7 @@ namespace Pedidos.connection
             catch (Exception ex)
             {
 
-                throw ex; // Lanzamos excepción.
+                Debug.WriteLine(ex.ToString()); // Lanzamos excepción.
             }
             finally
             {
@@ -79,18 +83,16 @@ namespace Pedidos.connection
             CMD.Connection = CN;
             CMD.CommandType = CommandType.Text;
 
-
-            CMD.CommandText = "INSERT INTO Pedidos (brand, model, enginetype, stock, price, year) VALUES (@p1,@p2,@p3,@p4,@p5,@p6);";
+            Debug.WriteLine(newPedido.NPedido);
+            CMD.CommandText = "INSERT INTO TPedidos VALUES (@p1, @p2, @p3, @p4, @p5)";
 
 
             //// establecemos los valores que tomarán los parámetros de la instrucción OleDb.
-            CMD.Parameters.AddWithValue("@p1", newPedido.Brand);
-            CMD.Parameters.AddWithValue("@p2", newPedido.Model);
-            CMD.Parameters.AddWithValue("@p3", newPedido.EngineType.ToString());
-            CMD.Parameters.AddWithValue("@p4", newPedido.Stock);
-            CMD.Parameters.AddWithValue("@p5", newPedido.Price);
-            CMD.Parameters.AddWithValue("@p6", newPedido.Year);
-
+            CMD.Parameters.AddWithValue("@p1", newPedido.NPedido);
+            CMD.Parameters.AddWithValue("@p2", newPedido.Cliente);
+            CMD.Parameters.AddWithValue("@p3", newPedido.DNI);
+            CMD.Parameters.AddWithValue("@p4", newPedido.Cantidad);
+            CMD.Parameters.AddWithValue("@p5", newPedido.Fecha);
 
             // Insertamos registro sin utilizar parámetros
             //CMD.CommandText = "INSERT INTO Libros VALUES ('" + nuevoLibro.Titulo + "', '" + nuevoLibro.Isbn + "', '" + nuevoLibro.Autor + "', " +
@@ -100,22 +102,15 @@ namespace Pedidos.connection
             CN.Open();
             CMD.ExecuteNonQuery();
 
-            MessageBox.Show("Record added successfully");
-
-
             CN.Close();
-
-
-
         }
 
-        public int DeletePedido(string brand, string model)
+        public int DeletePedido(string NPedido)
         {
             CN = new SqlConnection(connectionStr);
-            CMD = new SqlCommand("DELETE FROM Pedidos WHERE brand = @p0 AND model = @p1", CN);
+            CMD = new SqlCommand("DELETE FROM TPedidos WHERE NPedido = @p0", CN);
             CMD.CommandType = CommandType.Text;
-            CMD.Parameters.AddWithValue("@p0", brand);
-            CMD.Parameters.AddWithValue("@p1", model);
+            CMD.Parameters.AddWithValue("@p0", NPedido);
 
             // Eliminamos registro sin parámetros
             //CMD = new OleDbCommand("DELETE FROM Libros WHERE ISBN = '" + isbn + "'", CN);
@@ -138,25 +133,19 @@ namespace Pedidos.connection
             }
         }
 
-        public int UpdateExistingPedido(string brand,
-            string model,
-            string engine,
-            int stock,
-            double price,
-            int year)
+        public int UpdateExistingPedido(string NPedido, string Cliente, string DNI, int Cantidad, string Fecha)
         {
             CN = new SqlConnection(connectionStr);
-            CMD = new SqlCommand("UPDATE Pedidos" +
-                " SET brand = @p1, model = @p2, enginetype = @p3, stock = @p4, price = @p5, year = @p6" +
-                " WHERE brand = @p1 AND model = @p2", CN);
+            CMD = new SqlCommand("UPDATE TPedidos" +
+                               " SET Cliente = @p1, DNI = @p2, Cantidad = @p3, Fecha = @p4" +
+                                              " WHERE NPedido = @p0", CN);
 
             // set values for every parameter
-            CMD.Parameters.AddWithValue("@p1", brand);
-            CMD.Parameters.AddWithValue("@p2", model);
-            CMD.Parameters.AddWithValue("@p3", engine);
-            CMD.Parameters.AddWithValue("@p4", stock);
-            CMD.Parameters.AddWithValue("@p5", price);
-            CMD.Parameters.AddWithValue("@p6", year);
+            CMD.Parameters.AddWithValue("@p0", NPedido);
+            CMD.Parameters.AddWithValue("@p1", Cliente);
+            CMD.Parameters.AddWithValue("@p2", DNI);
+            CMD.Parameters.AddWithValue("@p3", Cantidad);
+            CMD.Parameters.AddWithValue("@p4", Fecha);
 
             CMD.CommandType = CommandType.Text;
             try

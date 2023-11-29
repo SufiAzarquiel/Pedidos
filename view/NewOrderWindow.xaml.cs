@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pedidos.viewmodel;
+using System;
 using System.Windows;
 
 namespace Pedidos.view
@@ -14,17 +15,15 @@ namespace Pedidos.view
         {
             this.mainWindow = mainWindow;
             InitializeComponent();
+
+            // Set the data context
+            DataContext = new ViewModel();
         }
 
         override protected void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
             mainWindow.WindowOpened = false;
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }
