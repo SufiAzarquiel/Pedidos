@@ -7,5 +7,15 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <Button x:Name="btnNew"
+                Content="Nuevo pedido"
+                HorizontalAlignment="Center" Margin="0, -50, 0, 0" VerticalAlignment="Center"
+                Width="200" Height="40"
+                Click="Button_Click"/>
+        <Button x:Name="btnModifyDelete" 
+                Content="Modificar o borrar un pedido"
+                HorizontalAlignment="Center" Margin="0, 50, 0, 0" VerticalAlignment="Center"
+                Width="200" Height="40"
+                Click="Button_Click"/>
     </Grid>
 </Window>
